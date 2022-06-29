@@ -12,23 +12,26 @@
     {% if ItemsList %}
         <hr>
         <table>
-            <tr><th>&nbsp;Commands&nbsp;</th><th>&nbsp;ID&nbsp;</th><th>&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;</th><th>&nbsp;Accepted?&nbsp;</th>
-                <th>&nbsp;&nbsp;email&nbsp;&nbsp;</th><th>&nbsp;phone&nbsp;</th><th>&nbsp;Email Verified&nbsp;</th><th>&nbsp;Privlage&nbsp;</th></tr>
+            <tr><th>&nbsp;ID&nbsp;</th><th>&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;</th><th>&nbsp;Accepted?&nbsp;</th><th>&nbsp;&nbsp;email&nbsp;&nbsp;</th><th>&nbsp;phone&nbsp;</th>
+                <th>&nbsp;Email Verified&nbsp;</th><th>&nbsp;Privlage&nbsp;</th><th>&nbsp;Commands&nbsp;</th></tr>
         {% for anItem in ItemsList %}
 
             <tr class=".user">
-                <td ><form method="post" action="/updateUser/"> {% csrf_token %}
-                        <input type="submit" value="Accept" name="action">&nbsp;&nbsp;
-                        <input type="submit" value="Promote" name="action">
-                        <input type="hidden" name="userID" value="{{ anItem.0 }}"/>
-                        <input type="hidden" name="Privlage" value="{{ anItem.9 }}"/>
-                    </form></td>
+
                 <td class="useredit">{{ anItem.0 }}</td> <!-- ID -->
                 <td>{{ anItem.3 }}</td> <!--! NAME -->
-                <td class="useredit">{{ anItem.7 }}</td> <!-- Accept -->
+                {% if anItem.7 == 1 %}
+                <td class="useredit">YES</td> <!-- Accept -->
+                {% else %}
+                <td class="useredit">NO</td> <!-- Accept -->
+                {% endif %}
                 <td >{{ anItem.4 }}</td> <!--! Email -->
                 <td class="useredit">{{ anItem.8 }}</td> <!-- Phone -->
-                <td class="useredit">{{ anItem.6 }}</td> <!-- Email v -->
+                {% if anItem.6 == 1 %}
+                <td class="useredit">YES</td> <!-- Email v -->
+                {% else %}
+                <td class="useredit">NO</td> <!-- Email v -->
+                {% endif %}
                 {% if anItem.9 == 0 %}
                     <td class="useredit">Normal</td> <!--! Privlage -->
                 {% elif anItem.9 == 1 %}
@@ -38,7 +41,13 @@
                 {% else %}
                     <td class="useredit">anItem.9</td> <!--! Privlage -->
                 {% endif %}
-
+                <td ><form method="post" action="/updateUser/"> {% csrf_token %}
+                        <input type="submit" value="Accept" name="action">&nbsp;&nbsp;
+                        <input type="submit" value="Promote" name="action">
+                        <input type="submit" value="DePromote" name="action">
+                        <input type="hidden" name="userID" value="{{ anItem.0 }}"/>
+                        <input type="hidden" name="Privlage" value="{{ anItem.9 }}"/>
+                    </form></td>
             </tr>
 
         {% endfor %}
@@ -48,5 +57,13 @@
             There are no users to edit.
         </div>
     {% endif %}
+<hr>
+<br>
+<h2>Rights legend:</h2>
+    <lu>
+        <li>Normal: has nothing and can see only the store items.</li>
+        <li>Admin: has the full right on the website.</li>
+        <li>Editor: Can edit and add items to the store.</li>
+    </lu>
 
 {% endblock %}

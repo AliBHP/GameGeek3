@@ -67,3 +67,23 @@ td.infoLable{
 td{
     color: white;
 }
+
+img
+{
+    width: 200px;
+    min-height: 200px;
+    max-height: auto;
+    float: left;
+    margin: 5px;
+    padding: 5px;
+}
+
+img.logo
+{
+    width: 100px;
+    min-height: 100px;
+    max-height: auto;
+    float: left;
+    margin: 10px;
+    padding: 0px;
+}

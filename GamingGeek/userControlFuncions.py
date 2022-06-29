@@ -11,8 +11,8 @@ import hashlib, math, random
 def login(request):
 
     # Logout of the system
-    #if request.session:
-    #    request.session.clear()
+    if 'ID' in request.session:
+        request.session.clear()
 
     db = dbClass.func_ConnectToDB()
 
@@ -40,6 +40,10 @@ def login(request):
             ########################
             #   Success Access
             #######################
+            print(r)
+            # mainverification
+            if int(r[0][7]) == 0:
+                return render(request, 'index.html', context={"msg": "You have been registered. However, you need an approval from the website master."})
 
             # Session Establishments
             request.session['ID'] = r[0][0]
@@ -57,7 +61,8 @@ def login(request):
 def register(request):
 
     # Logout of the system
-    request.session.clear()
+    if 'ID' in request.session:
+        request.session.clear()
 
     return render(request, 'NewUser.html')
 

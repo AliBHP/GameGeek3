@@ -33,7 +33,7 @@ def func_ConnectToDB():
             host="localhost",
             user="root",
             password="alibhp110",
-            database="gamegeek"
+            database="gaminggeek"
             )
             return mydb
         else:
@@ -130,6 +130,7 @@ def func_SendSQL(myDBin, SQLStatment:str, parameters={}, returnDate=True, return
             return db_OK_RESPOND
     except (mysql.Error, mysql.Warning) as e:
 
+        print(e)
         if e.errno == 1146:
             # Table is not exist
 
@@ -173,6 +174,7 @@ def func_InsertSQL(Conn, SQLStatment:str, parameters={}, returnID=True):
 
     except (mysql.Error, mysql.Warning) as e:
         # Return the error we got
+        print(e)
         err = Err(1002, "Database Insertion error", "The INSERT statment submited had been rejected by the database. Please check your insert statment.")
         err.err_ExtraInfo = e
         return err

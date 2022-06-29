@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Login to GamingGeek sys{% endblock %}
+
+{% block content %}
+
+    <dive>
+        <lo>
+<br><br>
+            <li>This will delete all the data in the website database base. BECAREFULL <br><br>
+                <form method="post" action="/ResetDatabase/">
+                    {% csrf_token %}
+                    <input type="password" name="deletepwd"/>
+                    <input type="submit" style="color: red; bold"> Restart the website database"</input><br>
+                </form>
+            </li>
+
+        </lo>
+<br><br>
+
+    </dive>
+
+{% endblock %}

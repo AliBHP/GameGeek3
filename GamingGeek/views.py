@@ -7,6 +7,7 @@ from . import DatabaseControler as dbClass
 from .ErrorReporting import ausError as ERR
 from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
+from django.forms import ImageField
 
 ############################################################################################
 #####     Navigation Methods
@@ -42,7 +43,8 @@ def home(request):
     #####  Show the login Page
 
     # Logout of the system
-    #request.session.clear()
+    if 'ID' in request.session:
+        request.session.clear()
 
     # Loign Page Open
     return render(request, 'index.html')
@@ -73,7 +75,6 @@ def editUsers(request):
 
         # Preper the SQL
         TheSQL = "SELECT * FROM users WHERE ID != " + str(request.session['ID'])
-        print(TheSQL)
 
         # Send the SQL
         r = dbClass.func_SendSQL(db, TheSQL)
@@ -83,7 +84,6 @@ def editUsers(request):
         if type(r) is ERR:
             return render(request, 'EditUsers.html', context={"lblResult": r.func_PrintError()})
         else:
-            print(r)
             return render(request, 'EditUsers.html', context={"ItemsList": r})
 
     else:
@@ -137,6 +137,8 @@ def InsertNewItems(request):
     if 'username' in request.session \
             and (request.session['Privlage'] == 1 or request.session['Privlage'] == 2):
 
+        ImageData = (request.POST['imagePath'])
+
         # Connect to database
         db = dbClass.func_ConnectToDB()
         if type(db) is ERR:
@@ -150,18 +152,21 @@ def InsertNewItems(request):
                       "hight": request.POST['hight'], "width": request.POST['width'],
                       "length": request.POST['length'], "weight": request.POST['weight'],
                       "minplayer": request.POST['minplayer'], "maxplayer": request.POST['maxplayer'],
-                      "playtime": request.POST['playtime'], "imagePath":request.POST['imagePath']}
+                      "playtime": request.POST['playtime'], "imagePath":ImageData }
 
         TheSQL = "INSERT INTO `items`(`itemId`, `itemname`, `shortname`, `description`, `Quantity`, `orginalprice`, " \
                  "`sellingprice`, `category`, `hight`, `width`, `length`, `weight`, `minplayer`, `maxplayer`, " \
-                 "`playtime`, `image1`) VALUES (%(itemId)s, %(itemname)s, %(shortname)s, %(description)s, %(Quantity)s," \
+                 "`playtime`, `image3`) VALUES (%(itemId)s, %(itemname)s, %(shortname)s, %(description)s, %(Quantity)s," \
                  " %(orginalprice)s, %(sellingprice)s, %(category)s," \
                  " %(hight)s, %(width)s, %(length)s, %(weight)s, %(minplayer)s, %(maxplayer)s, %(playtime)s, %(imagePath)s)"
 
 
         # Send the SQL
-        r = dbClass.func_InsertSQL(db, TheSQL, parameters)
+        r = dbClass.func_InsertSQL(db, TheSQL, parameters, returnID=True)
+
         dbClass.func_CloseConnection(db)
+
+
 
         # Check results
         if type(r) is ERR:
@@ -171,6 +176,8 @@ def InsertNewItems(request):
     else:
         # NO SESSION go login page
         return redirect(to='/')
+
+import base64
 
 def upload(request):
 
@@ -186,18 +193,50 @@ def upload(request):
     # NOW it works with edit store and add item to upload the user picture for the game
 
     ###########################
+    try:
+        if request.method == 'POST' and request.FILES['upload']  \
+                and (request.session['Privlage'] == 1 or request.session['Privlage'] == 2):
+            # Push the file to the database
 
-    if request.method == 'POST' and request.FILES['upload']:
-        upload = request.FILES['upload']
-        fss = FileSystemStorage()
-        file = fss.save(upload.name, upload)
-        file_url = fss.url(file)
-        if request.POST['TheSender'].__eq__("EDIT"):
-            return render(request, 'EditStore.html', {'file_url': file_url})
-        else:
-            return render(request, 'addItems.html', {'file_url': file_url})
+            file = request.FILES['upload']
+            ImageData =  base64.b64encode( file.read() )
 
-    return render(request, 'Error.html', context={"Error_Message": "Error loading the image. Please try again!"})
+            c = dbClass.func_ConnectToDB()
+            #if type(c) == ERR:
+            #    return render(request, 'Error.html', context={"Error_Message": "Error loading the image. Please try again!"})
+            #else:
+            #    InsrtSQL = "INSERT INTO `itemsimage`(`theImage`) VALUES ( %(ImageData)s )"
+            #    paramters = {'ImageData':ImageData}
+
+            #    r = dbClass.func_InsertSQL(Conn=c, SQLStatment=InsrtSQL, parameters=paramters)
+            #    if type(r) == ERR:
+            #        print("Insertion of image feils", r.func_PrintError())
+            #        return render(request, 'Error.html', context={"Error_Message": "Image can't be saved to the database!"})
+            #    else:
+            #        print("Image OK r=", r)
+
+            if request.POST['TheSender'].__eq__("EDIT"):
+                return render(request, 'EditStore.html', {'theImage':ImageData.decode('utf-8')})
+            else:
+                return render(request, 'addItems.html', {'theImage': ImageData.decode('utf-8')})
+
+        return render(request, 'Error.html', context={"Error_Message": "Error loading the image. Please try again!"})
+
+    except:
+        return render(request, 'Error.html', context={"Error_Message": "Error loading the image. Please try again!"})
+
+    # Orginal working code where the link to the file is saved
+    #if request.method == 'POST' and request.FILES['upload']:
+    #    upload = request.FILES['upload']
+    #    fss = FileSystemStorage()
+    #   file = fss.save(upload.name, upload)
+    #    file_url = fss.url(file)
+    #    if request.POST['TheSender'].__eq__("EDIT"):
+    #        return render(request, 'EditStore.html', {'file_url': file_url})
+    #    else:
+    #        return render(request, 'addItems.html', {'file_url': file_url})
+    #
+    #return render(request, 'Error.html', context={"Error_Message": "Error loading the image. Please try again!"})
 
 def GetFullStoreInfo():
 
@@ -220,9 +259,18 @@ def GetFullStoreInfo():
     if type(r) is ERR:
         return ERR
     else:
-        # SQL was OK
-        return r
+        result = []
 
+        # SQL was OK -- decode the result to show the images
+        for i in range(0, len(r)):
+            result.append([])
+            for u in range(0, len(r[i])):
+                if u == 17 and r[i][17]:
+                    result[i].append(r[i][u].decode('utf-8'))
+                else:
+                    result[i].append(r[i][u])
+
+        return result
 
 def updateAnItem(request):
 
@@ -275,7 +323,6 @@ def updateAnItem(request):
         dbClass.func_CloseConnection(db)
 
         if type(r) is ERR:
-            print(r.func_PrintError())
             request.session['FeedBackMsg'] = 'There was an error procssing the request. Please try again and make usre you enter the correct data.'
             return redirect(to='/editStore/')
         else:
@@ -304,20 +351,55 @@ def updateUser(request):
         if type(db) is ERR:
             return ERR
         else:
-            print(request.POST['action'])
             if request.POST['action'].__eq__("Accept"):
-                TheSQL = "UPDATE `users` SET `mainverification`=1 WHERE %(userID)s"
+                TheSQL = "UPDATE `users` SET `mainverification`=1 WHERE `ID`=%(userID)s"
                 paratmer = {'userID': request.POST['userID']}
                 dbClass.func_SendSQL(myDBin=db,SQLStatment=TheSQL, parameters=paratmer,returnDate=False)
 
             elif request.POST['action'].__eq__("Promote"):
-                if request.POST['Privlage'] < 2:
-                    TheSQL = "UPDATE `users` SET `PrivlageLevel`=`PrivlageLevel`+ 1 WHERE %(userID)s"
+                if int(request.POST['Privlage']) < 2:
+
                     paratmer = {'userID': request.POST['userID']}
-                    dbClass.func_SendSQL(myDBin=db,SQLStatment=TheSQL, parameters=paratmer,returnDate=False)
+                    TheSQL = "UPDATE `users` SET `PrivlageLevel`=`PrivlageLevel`+ 1 WHERE `ID`=%(userID)s"
+
+                    u = dbClass.func_SendSQL(myDBin=db, SQLStatment=TheSQL, parameters=paratmer,returnDate=False)
+
+                    if type(u)== ERR:
+                        dbClass.func_CloseConnection(db)
+                        return render(request, 'Error.html', context={"Error_Message": u.func_PrintError()})
+
+            elif request.POST['action'].__eq__("DePromote"):
+                if int(request.POST['Privlage']) > 0:
+
+                    paratmer = {'userID': request.POST['userID']}
+                    TheSQL = "UPDATE `users` SET `PrivlageLevel`=`PrivlageLevel`- 1 WHERE `ID`=%(userID)s"
+
+                    u = dbClass.func_SendSQL(myDBin=db, SQLStatment=TheSQL, parameters=paratmer,returnDate=False)
+
+                    if type(u)== ERR:
+                        dbClass.func_CloseConnection(db)
+                        return render(request, 'Error.html', context={"Error_Message": u.func_PrintError()})
 
             dbClass.func_CloseConnection(db)
             return redirect(to='/editUsers')
     else:
         # NO SESSION go login page
         return redirect(to='/')
+
+##################
+
+def setting(request):
+    if 'username' in request.session and (request.session['Privlage'] == 1):
+        return render(request, 'Settings.html')
+
+def ResetDatabase(request):
+    if 'username' in request.session and (request.session['Privlage'] == 1):
+        if request.POST['deletepwd'].__eq__("AliBHP#2110"):
+
+            r = dbClass.func_CreateDatabase()
+            if type(r) == ERR:
+                return render(request, 'Error.html', context={"Error_Message": "Something went wrong while doing that!"})
+            else:
+                return render(request, 'OK.html', context={"The_Message":"Restarting the database was done!"})
+        else:
+            return render(request, 'Error.html', context={"Error_Message": "Worng password. Only website creator knows the password!"})

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jun 29, 2022 at 04:15 AM
+-- Generation Time: Jun 29, 2022 at 12:26 PM
 -- Server version: 5.7.23
 -- PHP Version: 7.2.10
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `playtime` int(3) NOT NULL DEFAULT '30',
   `image1` varchar(100) COLLATE utf32_unicode_ci DEFAULT NULL,
   `image2` varchar(100) COLLATE utf32_unicode_ci DEFAULT NULL,
-  `imag3` varchar(100) COLLATE utf32_unicode_ci DEFAULT NULL,
+  `image3` blob,
   PRIMARY KEY (`itemId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
@@ -55,8 +55,9 @@ CREATE TABLE IF NOT EXISTS `items` (
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`itemId`, `itemname`, `shortname`, `description`, `Quantity`, `orginalprice`, `sellingprice`, `category`, `hight`, `width`, `length`, `weight`, `minplayer`, `maxplayer`, `playtime`, `image1`, `image2`, `imag3`) VALUES
-('bc005', 'Gobble and Fog', 'Hero Fight', 'A battle between two teams each team has to famous charectors', 3, 105, 220, 0, 10, 35, 45, 32, 2, 4, 30, '/media/pic5056685_euvKUHT.webp', NULL, NULL);
+INSERT INTO `items` (`itemId`, `itemname`, `shortname`, `description`, `Quantity`, `orginalprice`, `sellingprice`, `category`, `hight`, `width`, `length`, `weight`, `minplayer`, `maxplayer`, `playtime`, `image1`, `image2`, `image3`) VALUES
+('bc005', 'Gobble and Fog', 'Hero Fight', 'A battle between two teams each team has to famous charectors', 3, 105, 220, 0, 10, 35, 45, 32, 2, 4, 30, '/media/pic5056685_euvKUHT.webp', NULL, NULL),
+('1', '1', '1', '1', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, NULL, NULL, '');
 
 -- --------------------------------------------------------
 

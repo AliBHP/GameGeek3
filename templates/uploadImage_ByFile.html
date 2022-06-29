@@ -8,12 +8,10 @@
 
 </form>
 
-<div style="color: red;"><br>the uploaded picture MUST NOT exceed the size of 64kb.<br><br></div>
-
 <!--See File Uploaded-->
-{% if ImageDB_id %}
+{% if file_url %}
     <div align="center">
-        <img src="data:image;base64,{{ theImage }}">
+          <img src="{{ file_url }}">
     </div>
   <br>
 {% else %}

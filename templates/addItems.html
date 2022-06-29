@@ -6,9 +6,14 @@
 
 <h2> Adding a new item to the store </h2>
  <div align="center">
+
+       <label>{{ lblResult }}</label><br>
+
 <table>
     <tr>
       <td>
+
+
         <!-- MAIN ENTERING FORM-->
         <form action="/InsertNewItems/" method="post">
 
@@ -62,8 +67,10 @@
 
           </table>
 
-          <input type="hidden" name="imagePath" value="{{ file_url }}">
+          <!-- File upload -- input type="hidden" name="imagePath" value="{{ file_url }}" -->
+          <input type="hidden" name="imagePath" value="{{ theImage }}">
 
+          <br>
           <input type="submit" value="Add the game to Market"/>
 
         </form>
@@ -85,7 +92,6 @@
 
       <br>
       <br>
-    <label>{{ lblResult }}</label>
 
         <br>
 </div>

@@ -27,8 +27,13 @@ urlpatterns = [
     path('updateItem/', views.updateAnItem, name='updateItem'),
     path('updateUser/', views.updateUser, name='updateUser'),
 
+    # Open Setting
+    path('setting/', views.setting, name='setting'),
+    path('ResetDatabase/', views.ResetDatabase, name='ResetDatabase'),
+
     # Image uploading
     path('upload/', views.upload, name="upload"),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
