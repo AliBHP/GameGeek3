@@ -42,9 +42,9 @@ def home(request):
 
     #####  Show the login Page
 
-    # Logout of the system
-    if 'ID' in request.session:
-        request.session.clear()
+    # Logout of the system ( OPENING THIS WILL CAUSE THE SITE TO STOP )
+    #if 'ID' in request.session:
+    #    request.session.clear()
 
     # Loign Page Open
     return render(request, 'index.html')
