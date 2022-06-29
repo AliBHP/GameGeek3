@@ -43,12 +43,15 @@ def home(request):
     #####  Show the login Page
 
     # Logout of the system ( OPENING THIS WILL CAUSE THE SITE TO STOP )
-    #if 'ID' in request.session:
-    #    request.session.clear()
+    if 'ID' in request.session:
+        request.session.clear()
 
     # Loign Page Open
+    #return render(request, 'dd.html')
     return render(request, 'index.html')
 
+    #from django.http import HttpResponse
+    #return HttpResponse("Hello, World!")
 def addItems(request):
 
     #### Show Add Item Page

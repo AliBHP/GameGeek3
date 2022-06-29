@@ -3,14 +3,13 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{% static "style.css" %}">
-    <title>{% block title %}GameingGeek{% endblock %}</title>
-    <link rel="icon" href="{% static 'favicon.ico' %}">
+    <title>{% block title %}{% endblock %} - GameingGeek</title>
 </head>
 
 <body >
     <table>
         <tr>
-            <td rowspan="2"><img class="logo" src="{% static "logo.png" %}" alt="HOME" ></td>
+            <td rowspan="2"><img height="100pt"  src="{% static "logo.png" %}" alt="HOME" ></td>
             <td>
                 <div id="sidebar">
                     {% block sidebar %}
@@ -28,7 +27,6 @@
 
                         {% if request.session.Privlage == 1 %}
                             <li style="display:inline"><a href="/editUsers">Edit Users</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                            <li style="display:inline"><a href="/setting">Site Setting</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                         {% endif %}
 
                         {% if request.session.username != none %}

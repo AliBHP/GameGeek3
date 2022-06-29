@@ -11,8 +11,8 @@ import hashlib, math, random
 def login(request):
 
     # Logout of the system ( OPENING THIS WILL CAUSE THE SITE TO STOP )
-    #if 'ID' in request.session:
-    #    request.session.clear()
+    if 'ID' in request.session:
+        request.session.clear()
 
     db = dbClass.func_ConnectToDB()
 
