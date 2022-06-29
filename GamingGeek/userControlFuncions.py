@@ -33,7 +33,7 @@ def login(request):
     # print(request.POST['uname'] + " " + request.POST['psw'])
 
     if type(r) is ERR:
-        return render(request, 'Error.html', context={"Error_Message": db.func_PrintError()})
+        return render(request, 'Error.html', context={"Error_Message": r.func_PrintError()})
     else:
         if len(r):
 

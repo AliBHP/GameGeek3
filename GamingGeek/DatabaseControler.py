@@ -37,8 +37,9 @@ def func_ConnectToDB():
             )
             return mydb
         else:
+            #mysql://b8a0b341a60dcd:0d9569a0@us-cdbr-east-05.cleardb.net/heroku_3a6af533857122d?reconnect=true
             mydb = mysql.connect(
-            host="eu-cdbr-east-05.cleardb.com",
+            host="us-cdbr-east-05.cleardb.net",
             user="b8a0b341a60dcd",
             password="0d9569a0",
             database="heroku_3a6af533857122d"
@@ -128,6 +129,17 @@ def func_SendSQL(myDBin, SQLStatment:str, parameters={}, returnDate=True, return
             myDBin.commit()
             return db_OK_RESPOND
     except (mysql.Error, mysql.Warning) as e:
+
+        if e.errno == 1146:
+            # Table is not exist
+
+            c = func_CreateDatabase()
+            if type(c) == Err:
+                # Return the error we got
+                err = Err(1201, "Missing Table", "The table tarteted by the sent sql is not found.")
+                err.err_ExtraInfo = e
+                return c
+
         # Return the error we got
         err = Err(1002, "Database return an error", "The SQL statment submited is not in the correct format or have some error in it. Please check your SQL.")
         err.err_ExtraInfo = e
@@ -173,7 +185,7 @@ def func_InsertSQL(Conn, SQLStatment:str, parameters={}, returnID=True):
 # This function can be used to create the database from scratch and can be used as well to recreate
 # CAUTION: ALL DATA IN DATABASE WILL BE ERASED IF THIS FUNCTION IS USED
 # NOTE: COMMIT; statment must be shown at the end of the file once only
-def func_CreateDatabase(sqlFileName="austruck.sql"):
+def func_CreateDatabase(sqlFileName="gaminggeek.sql"):
 
     #   -----------------------------------
     # parameters:
@@ -187,10 +199,11 @@ def func_CreateDatabase(sqlFileName="austruck.sql"):
     cnn = func_ConnectToDB()
     if type(cnn) == Err:
         cnn.func_PrintError()
-        return
+        return cnn
     print("Connection Established")
     print("*"*10)
 
+    print(os.path.abspath(os.getcwd()))
     # Check for the SQL file
     if os.path.isfile(sqlFileName):
         # File is there, start reading
@@ -242,7 +255,8 @@ def func_CreateDatabase(sqlFileName="austruck.sql"):
                 if type(r) is Err:
                     # Error was found, printint out and exit the function
                     r.func_PrintError()
-                    return " ------- FINISH ------- "
+                    print(" ------- FINISH ------- ")
+                    return r
                 else:
                     # No errors
                     print("  Run Succssfully \n")
@@ -257,7 +271,7 @@ def func_CreateDatabase(sqlFileName="austruck.sql"):
             elif "COMMIT;" in onelineWords[0]:
                 # Reach the end of file, break the while loop
                 print("-"*5, "FILE END", "-"*5)
-                return
+                return db_OK_RESPOND
 
             # Read the next line in the file ( Normally this will start after running one SQL statement )
             oneline = sqlFileHandler.readline()
