@@ -23,8 +23,7 @@ Label{
     color: var(--main-Oringe);
 }
 
-.WorningLabel
-{
+.WorningLabel{
   color: red;
 }
 

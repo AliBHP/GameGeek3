@@ -4,22 +4,35 @@
 
 {% block content %}
 
-   <h1>Edit Registered users</h1>
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="/storehome/"><i class="fa fa-home"></i> Home</a>
+                        <span>Edit Users</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
 
-    <label class="WorningLabel" id="lblMsg">{{ request.session.FeedBackMsg }}</label>
-    <br>
+
+ <div align="center">
+    <label class="WorningLabel" id="lblMsg">{{ lblResult }}</label>
 
     {% if ItemsList %}
         <hr>
-        <table>
-            <tr><th>&nbsp;ID&nbsp;</th><th>&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;</th><th>&nbsp;Accepted?&nbsp;</th><th>&nbsp;&nbsp;email&nbsp;&nbsp;</th><th>&nbsp;phone&nbsp;</th>
-                <th>&nbsp;Email Verified&nbsp;</th><th>&nbsp;Privlage&nbsp;</th><th>&nbsp;Commands&nbsp;</th></tr>
+        <table class="user__edit__table">
+            <tr><th class="thead">&nbsp;ID&nbsp;</th><th class="thead">&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;</th><th>&nbsp;Accepted?&nbsp;</th><th>&nbsp;&nbsp;email&nbsp;&nbsp;</th><th>&nbsp;phone&nbsp;</th>
+                <th>Email Verified&nbsp;</th><th>&nbsp;Privlage&nbsp;</th><th>&nbsp;Commands&nbsp;</th></tr>
         {% for anItem in ItemsList %}
 
             <tr class=".user">
 
                 <td class="useredit">{{ anItem.0 }}</td> <!-- ID -->
-                <td>{{ anItem.3 }}</td> <!--! NAME -->
+                <td class="tbody">{{ anItem.3 }}</td> <!--! NAME -->
                 {% if anItem.7 == 1 %}
                 <td class="useredit">YES</td> <!-- Accept -->
                 {% else %}
@@ -42,9 +55,9 @@
                     <td class="useredit">anItem.9</td> <!--! Privlage -->
                 {% endif %}
                 <td ><form method="post" action="/updateUser/"> {% csrf_token %}
-                        <input type="submit" value="Accept" name="action">&nbsp;&nbsp;
-                        <input type="submit" value="Promote" name="action">
-                        <input type="submit" value="DePromote" name="action">
+                        <input class="site-btn" type="submit" value="Accept" name="action">&nbsp;&nbsp;
+                        <input class="site-btn" type="submit" value="Promote" name="action">
+                        <input class="site-btn" type="submit" value="DePromote" name="action">
                         <input type="hidden" name="userID" value="{{ anItem.0 }}"/>
                         <input type="hidden" name="Privlage" value="{{ anItem.9 }}"/>
                     </form></td>
@@ -57,13 +70,14 @@
             There are no users to edit.
         </div>
     {% endif %}
+
+        </div>
 <hr>
-<br>
-<h2>Rights legend:</h2>
-    <lu>
-        <li>Normal: has nothing and can see only the store items.</li>
-        <li>Admin: has the full right on the website.</li>
-        <li>Editor: Can edit and add items to the store.</li>
+<h3 style="padding-left: 30pt; color: red;">Rights legend:</h3>
+    <lu style="padding-left: 50pt">
+        <li style="padding-left: 50pt">Normal: has nothing and can see only the store items.</li>
+        <li style="padding-left: 50pt">Admin: has the full right on the website.</li>
+        <li style="padding-left: 50pt">Editor: Can edit and add items to the store.</li>
     </lu>
 
 {% endblock %}

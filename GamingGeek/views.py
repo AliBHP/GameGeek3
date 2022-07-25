@@ -64,7 +64,7 @@ def addItems(request):
         # NO SESSION go login page
         return redirect(to='/')
 
-def editUsers(request):
+def editUsers(request, msg=""):
 
     #### Show users list
 
@@ -87,7 +87,7 @@ def editUsers(request):
         if type(r) is ERR:
             return render(request, 'EditUsers.html', context={"lblResult": r.func_PrintError()})
         else:
-            return render(request, 'EditUsers.html', context={"ItemsList": r})
+            return render(request, 'EditUsers.html', context={"ItemsList": r, "lblResult": msg})
 
     else:
         # NO SESSION go login page
@@ -140,7 +140,8 @@ def InsertNewItems(request):
     if 'username' in request.session \
             and (request.session['Privlage'] == 1 or request.session['Privlage'] == 2):
 
-        ImageData = (request.POST['imagePath'])
+        # This was used for saving image into the database. It was sent using the 'uploadImage.html' that was connected to the addItem.html
+        #ImageData = (request.POST['imagePath'])
 
         # Connect to database
         db = dbClass.func_ConnectToDB()
@@ -155,7 +156,7 @@ def InsertNewItems(request):
                       "hight": request.POST['hight'], "width": request.POST['width'],
                       "length": request.POST['length'], "weight": request.POST['weight'],
                       "minplayer": request.POST['minplayer'], "maxplayer": request.POST['maxplayer'],
-                      "playtime": request.POST['playtime'], "imagePath":ImageData }
+                      "playtime": request.POST['playtime'], "imagePath":request.POST['imagePath'] }
 
         TheSQL = "INSERT INTO `items`(`itemId`, `itemname`, `shortname`, `description`, `Quantity`, `orginalprice`, " \
                  "`sellingprice`, `category`, `hight`, `width`, `length`, `weight`, `minplayer`, `maxplayer`, " \
@@ -305,7 +306,7 @@ def updateAnItem(request):
                               "hight": request.POST['hight'], "width": request.POST['width'],
                               "length": request.POST['length'], "weight": request.POST['weight'],
                               "minplayer": request.POST['minplayer'], "maxplayer": request.POST['maxplayer'],
-                              "playtime": request.POST['playtime'], "imagePath": request.POST['imagePath']}
+                              "playtime": request.POST['playtime'], "imagePath": request.POST['imgLink']}
 
                 TheSQL = "UPDATE `items` SET `itemname`=%(itemname)s,`shortname`=%(shortname)s,`description`=%(description)s," \
                          "`Quantity`=%(Quantity)s,`orginalprice`=%(orginalprice)s, " \
@@ -384,7 +385,7 @@ def updateUser(request):
                         return render(request, 'Error.html', context={"Error_Message": u.func_PrintError()})
 
             dbClass.func_CloseConnection(db)
-            return redirect(to='/editUsers')
+            return redirect(to='/editUsers', msg="Done Successfully!")
     else:
         # NO SESSION go login page
         return redirect(to='/')
