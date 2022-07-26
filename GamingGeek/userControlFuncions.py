@@ -40,7 +40,7 @@ def login(request):
             ########################
             #   Success Access
             #######################
-            print(r)
+            #print(r)
             # mainverification
             if int(r[0][7]) == 0:
                 return render(request, 'index.html', context={"msg": "You have been registered. However, you need an approval from the website master."})
