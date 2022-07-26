@@ -27,7 +27,7 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 SECRET_KEY = 'django-insecure-e$6%%@&d2uj-!_si7^*m8p@81!jg57qgx$6+$g-bk%ftxf=kxr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['gaminggeek.herokuapp.com', '.herokuapp.com','127.0.0.1']
 
@@ -156,7 +156,8 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),
+]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
